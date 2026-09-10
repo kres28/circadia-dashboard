@@ -97,18 +97,30 @@ const CalculationEngine = {
         /*
         ======================================
         Attach Loyalty Points
-        Maps Customer ID → Points
+        Uses Latest Entry Per Customer
         ======================================
         */
 
         const loyaltyPointsMap = new Map();
 
-        AppState.loyaltyPoints.forEach(row => {
+        for (
+            let i = AppState.loyaltyPoints.length - 1;
+            i >= 0;
+            i--
+        ) {
+
+            const row =
+                AppState.loyaltyPoints[i];
 
             const customerId =
                 String(row["Customer ID"] || "").trim();
 
-            if (!customerId) return;
+            if (!customerId) continue;
+
+            // Already found the latest entry
+            if (loyaltyPointsMap.has(customerId)) {
+                continue;
+            }
 
             const points =
                 Number(
@@ -122,7 +134,7 @@ const CalculationEngine = {
                 points
             );
 
-        });
+        }
 
         customerMap.forEach(customer => {
 
