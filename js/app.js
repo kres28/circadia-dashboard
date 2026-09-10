@@ -83,24 +83,126 @@ document
 
 async function refreshDashboard() {
 
-    const button = document.getElementById("refreshButton");
+    const button =
+        document.getElementById("refreshButton");
 
     button.disabled = true;
+
     button.textContent = "Refreshing...";
+
+
+    /*
+    ======================================
+    Save Current Filters
+    ======================================
+    */
+
+    const savedFilters = {
+
+        year:
+            document.getElementById("yearFilter").value,
+
+        quarter:
+            document.getElementById("quarterFilter").value,
+
+        tier:
+            document.getElementById("tierFilter").value,
+
+        tag:
+            document.getElementById("tagFilter").value,
+
+        state:
+            document.getElementById("stateFilter").value,
+
+        status:
+            document.getElementById("statusFilter").value,
+
+        stockist:
+            document.getElementById("stockistOnly").checked,
+
+        search:
+            document.getElementById("searchCustomer").value,
+
+        from:
+            AppState.filters.from || "",
+
+        to:
+            AppState.filters.to || ""
+
+    };
+
 
     try {
 
-        await Api.loadData();
-
         /*
         ======================================
-        Restore Default Filters
+        Reload Data
         ======================================
         */
 
-        document.getElementById("stockistOnly").checked = true;
+        await Api.loadData();
+
+
+        /*
+        ======================================
+        Repopulate Filter Options
+        ======================================
+        */
 
         Filters.populateFilters();
+
+
+        /*
+        ======================================
+        Restore Filter UI
+        ======================================
+        */
+
+        document.getElementById("yearFilter").value =
+            savedFilters.year;
+
+        document.getElementById("quarterFilter").value =
+            savedFilters.quarter;
+
+        document.getElementById("tierFilter").value =
+            savedFilters.tier;
+
+        document.getElementById("tagFilter").value =
+            savedFilters.tag;
+
+        document.getElementById("stateFilter").value =
+            savedFilters.state;
+
+        document.getElementById("statusFilter").value =
+            savedFilters.status;
+
+        document.getElementById("stockistOnly").checked =
+            savedFilters.stockist;
+
+        document.getElementById("searchCustomer").value =
+            savedFilters.search;
+
+
+        /*
+        ======================================
+        Restore Date Range State
+        ======================================
+        */
+
+        AppState.filters.from =
+            savedFilters.from;
+
+        AppState.filters.to =
+            savedFilters.to;
+
+
+        /*
+        ======================================
+        Reapply Filters
+        ======================================
+        */
+
+        Filters.updateFilterStates();
 
         Filters.apply();
 
