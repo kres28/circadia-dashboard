@@ -1,0 +1,390 @@
+/* ==========================================
+   Partnership Dashboard
+   Dashboard Components
+========================================== */
+
+/* ------------------------------
+   KPI CARD
+------------------------------ */
+
+.kpi-card {
+
+    position: relative;
+
+    background: var(--color-surface);
+
+    border: 1px solid var(--color-border);
+
+    border-radius: var(--radius-lg);
+
+    padding: 24px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: space-between;
+
+    min-height: 140px;
+
+    transition: var(--transition-fast);
+
+    overflow: hidden;
+
+}
+
+.kpi-card:hover {
+
+    transform: translateY(-3px);
+
+    box-shadow: var(--shadow-lg);
+
+}
+
+/* Top Row */
+
+.kpi-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+}
+
+/* KPI Title */
+
+.kpi-title {
+
+    font-size: var(--font-sm);
+
+    font-weight: var(--font-medium);
+
+    color: var(--color-text-light);
+
+}
+
+/* KPI Icon */
+
+.kpi-icon {
+
+    width: 46px;
+
+    height: 46px;
+
+    border-radius: 14px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: rgba(36,55,74,.06);
+
+    color: var(--color-primary);
+
+}
+
+.kpi-icon svg {
+
+    width: 22px;
+
+    height: 22px;
+
+}
+
+/* Value */
+
+.kpi-value {
+
+    margin-top: 18px;
+
+    font-size: 34px;
+
+    font-weight: var(--font-bold);
+
+    color: var(--color-primary);
+
+    letter-spacing: -.03em;
+
+}
+
+/* Footer */
+
+.kpi-footer {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-top: 20px;
+
+}
+
+/* Trend */
+
+.kpi-trend {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+}
+
+.kpi-trend.up {
+
+    color: var(--color-success);
+
+}
+
+.kpi-trend.down {
+
+    color: var(--color-danger);
+
+}
+
+.kpi-trend.same {
+
+    color: var(--color-info);
+
+}
+
+/* Comparison */
+
+.kpi-period {
+
+    font-size: 12px;
+
+    color: var(--color-text-muted);
+
+}
+
+/* ==========================================
+   SECTION HEADINGS
+========================================== */
+
+.section-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 18px;
+
+}
+
+.section-title {
+
+    font-size: 22px;
+
+    font-weight: var(--font-semibold);
+
+    color: var(--color-primary);
+
+}
+
+.section-description {
+
+    color: var(--color-text-light);
+
+    font-size: 14px;
+
+}
+
+/* ==========================================
+   CHART CARD
+========================================== */
+
+.chart-card {
+
+    background: white;
+
+    border: 1px solid var(--color-border);
+
+    border-radius: var(--radius-lg);
+
+    padding: 24px;
+
+    box-shadow: var(--shadow-sm);
+
+}
+
+.chart-placeholder {
+
+    height: var(--chart-height);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border: 2px dashed var(--color-border);
+
+    border-radius: var(--radius-md);
+
+    color: var(--color-text-muted);
+
+}
+
+/* ==========================================
+   STATUS PILLS
+========================================== */
+
+.status-pill {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 7px 14px;
+
+    border-radius: var(--radius-pill);
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+}
+
+.status-pill.upgrading {
+
+    background: var(--color-success-bg);
+
+    color: var(--color-success);
+
+}
+
+.status-pill.maintained {
+
+    background: var(--color-info-bg);
+
+    color: var(--color-info);
+
+}
+
+.status-pill.downgrading {
+
+    background: var(--color-danger-bg);
+
+    color: var(--color-danger);
+
+}
+
+/* ==========================================
+   PROGRESS BAR
+========================================== */
+
+.progress {
+
+    width: 100%;
+
+    height: 10px;
+
+    background: var(--color-border-light);
+
+    border-radius: var(--radius-pill);
+
+    overflow: hidden;
+
+}
+
+.progress-bar {
+
+    height: 100%;
+
+    border-radius: var(--radius-pill);
+
+    background: var(--color-primary);
+
+    transition: width .4s ease;
+
+}
+
+.progress-label {
+
+    margin-top: 8px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    font-size: 12px;
+
+    color: var(--color-text-light);
+
+}
+
+/* ==========================================
+   EMPTY STATE
+========================================== */
+
+.empty-state {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 80px;
+
+    text-align: center;
+
+    color: var(--color-text-muted);
+
+}
+
+.empty-state h3 {
+
+    margin-bottom: 8px;
+
+    color: var(--color-primary);
+
+}
+
+.empty-state p {
+
+    max-width: 400px;
+
+}
+
+/* ==========================================
+   LOADING
+========================================== */
+
+.loading-screen {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 80px;
+
+}
+
+/* ==========================================
+   HIDE FILTERS
+========================================== */
+
+#tagFilter {
+    display: none;
+}

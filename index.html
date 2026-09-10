@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Partnership Dashboard</title>
+
+    <!-- Prevent Search Engines -->
+    <meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex">
+    <meta name="googlebot" content="noindex,nofollow">
+    <meta name="bingbot" content="noindex,nofollow">
+
+    <meta name="theme-color" content="#24374A">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/table.css">
+</head>
+
+<body>
+
+<div id="app">
+
+    <!-- SIDEBAR -->
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main">
+
+        <!-- HEADER -->
+
+        <header class="header">
+
+            <div>
+
+                <h1>
+                    Circadia AU
+                </h1>
+
+                <p>
+                    Partnership Dashboard
+                </p>
+
+            </div>
+
+            <div class="sheet-config">
+
+                <input
+                    type="text"
+                    id="sheetUrl"
+                    placeholder="Paste Google Sheet URL">
+
+                <button id="saveSheetUrl">
+                    Save
+                </button>
+
+                <button id="refreshButton">
+                    Refresh Data
+                </button>
+
+                <button id="openOrdersButton">
+                    Open Orders
+                </button>
+
+            </div>
+
+        </header>
+
+        <!-- KPI CARDS -->
+        <section id="kpiContainer" class="kpi-grid">
+
+        </section>
+        
+
+        <!-- FILTERS -->
+
+        <section class="filters">
+
+            <div class="filter-row">
+
+                <input type="date" id="dateFrom">
+
+                <input type="date" id="dateTo">
+
+                <select id="yearFilter">
+                    <option value="">All Years</option>
+                </select>
+
+                <select id="quarterFilter">
+                    <option value="">All Quarters</option>
+                </select>
+
+                <select id="tierFilter">
+                    <option value="">All Tiers</option>
+                </select>
+
+                <select id="tagFilter">
+                    <option value="">All Tags</option>
+                </select>
+
+                <select id="stateFilter">
+                    <option value="">All States</option>
+                </select>
+
+                <select id="statusFilter">
+                    <option value="">All Status</option>
+                    <option value="upgrade">Upgrading</option>
+                    <option value="maintained">Maintained</option>
+                    <option value="downgrade">Downgrading</option>
+                </select>
+
+                <label class="checkbox">
+                    <input
+                        type="checkbox"
+                        id="showStatusColumn"
+                        >
+                    <span>Show Status</span>
+                </label>
+
+                <label class="checkbox">
+
+                    <input
+                        type="checkbox"
+                        id="stockistOnly"
+                        checked>
+
+                    <span>Stockists Only</span>
+
+                </label>
+
+            </div>
+
+            <div class="filter-row search-row">
+
+                <input
+                    type="search"
+                    id="searchCustomer"
+                    placeholder="Search customer...">
+
+            </div>
+
+        </section>
+
+        <!-- CHART PLACEHOLDER -->
+
+        <section class="card">
+
+            <div class="section-header">
+
+                <h3>Revenue Overview</h3>
+
+                <button
+                    id="toggleCharts"
+                    class="toggle-button">
+
+                    Hide Charts
+
+                </button>
+
+            </div>
+
+            <div id="dashboardCharts">
+
+                <div class="chart-card">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+
+                <div class="chart-card">
+                    <canvas id="tierChart"></canvas>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- CUSTOMER TABLE -->
+
+        <section
+            id="customerSection"
+            class="table-card">
+
+            <div class="table-header">
+
+                <div>
+
+                    <h2>
+                        Partnership Customers
+                    </h2>
+
+                    <p>
+                        Customer performance for the selected period
+                    </p>
+
+                </div>
+
+                <div id="tableSummary">
+
+                </div>
+
+            </div>
+
+            <div class="table-wrapper">
+
+                <table id="customerTable">
+
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th data-sort="points">
+                                Points
+                                <span class="tooltip">
+                                    ⓘ
+                                    <span class="tooltip-text">
+                                        Current loyalty points.
+                                    </span>
+                                </span>
+                                <span class="sort-icon">↕</span>
+                            </th>
+                            <th>
+                                Tier
+                                <span class="tooltip">
+                                    ⓘ
+                                    <span class="tooltip-text">
+                                        Active loyalty tier for the current quarter.
+                                    </span>
+                                </span>
+                            </th>
+                            <th>
+                                Running Tier
+                                <span class="tooltip">
+                                    ⓘ
+                                    <span class="tooltip-text">
+                                        Customer's tier based on their Total Paid for the selected quarter or date range.
+                                    </span>
+                                </span>
+                            </th>
+                            <th>
+                                Previous Tier
+                                <span class="tooltip">
+                                    ⓘ
+                                    <span class="tooltip-text">
+                                        Customer's tier based on Total Paid during the previous quarter or previous date range.
+                                        <br><br>
+                                        <strong>Example:</strong> If Q3 is selected, Previous Tier is based on the customer's Total Paid in Q2.
+                                    </span>
+                                </span>
+                            </th>
+                            <th>
+                                Next Tier
+                                <span class="tooltip">
+                                    ⓘ
+                                    <span class="tooltip-text">
+                                        The next partnership tier above the customer's Running Tier based on Total Paid for the selected period.
+                                    </span>
+                                </span>
+                            </th>
+                            <th id="statusColumn" data-sort="status">
+                                Status
+                                <span class="tooltip">
+                                    ⓘ
+                                    <span class="tooltip-text">
+                                        Compares "Tier" column with "Running Tier" column for the selected period.
+                                    </span>
+                                </span>
+                                <span class="sort-icon">↕</span>
+                            </th>
+                            <th data-sort="statusII">
+                                Status II
+                                <span class="tooltip">
+                                    ⓘ
+                                    <span class="tooltip-text">
+                                        Compares "Previous Tier" column with "Running Tier" column for the selected period.
+                                    </span>
+                                </span>
+                                <span class="sort-icon">↕</span>
+                            </th>
+                            <th data-sort="totalPaid">
+                                Total Paid
+                                <span class="tooltip">
+                                    ⓘ
+                                    <span class="tooltip-text">
+                                        Sum of paid transactions only.
+                                        Excludes payments made using Shopify Store Credit and Gift Cards.
+                                    </span>
+                                </span>
+                                <span class="sort-icon">↕</span>
+                            </th>
+
+                            <th data-sort="storeCredit">
+                                Store Credit
+                                <span class="tooltip">
+                                    ⓘ
+                                    <span class="tooltip-text">
+                                        Total amount paid using Shopify Store Credit.
+                                    </span>
+                                </span>
+                                <span class="sort-icon">↕</span>
+                            </th>
+
+                            <th data-sort="giftCard">
+                                Gift Card
+                                <span class="tooltip">
+                                    ⓘ
+                                    <span class="tooltip-text">
+                                        Total amount paid using Gift Cards.
+                                    </span>
+                                </span>
+                                <span class="sort-icon">↕</span>
+                            </th>
+
+                            <th data-sort="orderTotal">
+                                Order Total
+                                <span class="tooltip">
+                                    ⓘ
+                                    <span class="tooltip-text">
+                                        Sum of all order totals.
+                                    </span>
+                                </span>
+                                <span class="sort-icon">↕</span>
+                            </th>
+
+                            <th>
+                                AOV
+                                <span class="tooltip">
+                                    ⓘ
+                                    <span class="tooltip-text">
+                                        Average Order Value. Calculated as Order Total divided by the number of Orders.
+                                    </span>
+                                </span>
+                            </th>
+
+                            <th>
+                                Spend to Upgrade
+                                <span class="tooltip">
+                                    ⓘ
+                                    <span class="tooltip-text">
+                                        Remaining spend required to reach the next partnership tier based on Total Paid.
+                                    </span>
+                                </span>
+                            </th>
+
+                            <th data-sort="orderCount">
+                                Orders
+                                <span class="tooltip">
+                                    ⓘ
+                                    <span class="tooltip-text">
+                                        Total number of orders placed by the customer.
+                                    </span>
+                                </span>
+                                <span class="sort-icon">↕</span>
+                            </th>
+                            <th>Progress</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="customerTableBody">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+        <!-- OPEN ORDERS TABLE -->
+
+        <section
+            id="openOrdersSection"
+            class="table-card hidden">
+
+            <div class="table-header">
+
+                <div>
+
+                    <h2>Open Orders</h2>
+
+                    <p>Orders requiring payment or fulfillment</p>
+
+                </div>
+
+                <button id="backToDashboard">
+
+                    ← Dashboard
+
+                </button>
+
+            </div>
+
+            <div class="table-wrapper">
+
+                <table id="openOrdersTable">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Order Name</th>
+                            <th>Customer ID</th>
+                            <th>Customer Email</th>
+                            <th data-open-sort="createdDate">
+                                Created Date
+                                <span class="sort-icon">↕</span>
+                            </th>
+                            <th data-open-sort="orderTotal">
+                                Order Total
+                                <span class="sort-icon">↕</span>
+                            </th>
+                            <th>Payment Status</th>
+                            <th>Fulfillment Status</th>
+                            <th>Customer State</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="openOrdersTableBody">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<!-- JavaScript -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/tiers.js"></script>
+<script src="js/calculations.js"></script>
+<script src="js/filters.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/table.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>

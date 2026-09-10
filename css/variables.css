@@ -1,0 +1,232 @@
+/* ============================================
+   Partnership Dashboard
+   Design System
+============================================ */
+
+:root {
+
+    /* ========================================
+       BRAND COLORS
+    ======================================== */
+
+    --color-primary: #24374A;
+    --color-primary-light: #2E4A63;
+    --color-primary-dark: #1A2A38;
+
+    --color-white: #FFFFFF;
+
+    --color-background: #F7F9FB;
+
+    --color-surface: #FFFFFF;
+
+    --color-border: #E5E7EB;
+
+    --color-border-light: #F1F3F5;
+
+    --color-hover: #F3F6F9;
+
+    --color-text: #24374A;
+
+    --color-text-light: #64748B;
+
+    --color-text-muted: #94A3B8;
+
+
+
+    /* ========================================
+       STATUS COLORS
+    ======================================== */
+
+    --color-success: #16A34A;
+
+    --color-success-bg: #ECFDF3;
+
+    --color-info: #2563EB;
+
+    --color-info-bg: #EFF6FF;
+
+    --color-warning: #D97706;
+
+    --color-warning-bg: #FFF7ED;
+
+    --color-danger: #DC2626;
+
+    --color-danger-bg: #FEF2F2;
+
+
+
+    /* ========================================
+       TABLE
+    ======================================== */
+
+    --table-header-bg: #FAFBFC;
+
+    --table-row-hover: #F8FAFC;
+
+    --table-header-height: 54px;
+
+    --table-row-height: 58px;
+
+
+
+    /* ========================================
+       TYPOGRAPHY
+    ======================================== */
+
+    --font-family: "Inter", sans-serif;
+
+    --font-xs: 12px;
+
+    --font-sm: 13px;
+
+    --font-md: 14px;
+
+    --font-lg: 16px;
+
+    --font-xl: 20px;
+
+    --font-2xl: 28px;
+
+    --font-3xl: 36px;
+
+
+
+    --font-light: 300;
+
+    --font-normal: 400;
+
+    --font-medium: 500;
+
+    --font-semibold: 600;
+
+    --font-bold: 700;
+
+
+
+    /* ========================================
+       SPACING
+    ======================================== */
+
+    --space-1: 4px;
+
+    --space-2: 8px;
+
+    --space-3: 12px;
+
+    --space-4: 16px;
+
+    --space-5: 20px;
+
+    --space-6: 24px;
+
+    --space-8: 32px;
+
+    --space-10: 40px;
+
+    --space-12: 48px;
+
+    --space-16: 64px;
+
+
+
+    /* ========================================
+       BORDER RADIUS
+    ======================================== */
+
+    --radius-sm: 6px;
+
+    --radius-md: 10px;
+
+    --radius-lg: 14px;
+
+    --radius-xl: 20px;
+
+    --radius-pill: 9999px;
+
+
+
+    /* ========================================
+       SHADOWS
+    ======================================== */
+
+    --shadow-sm:
+        0 1px 2px rgba(0,0,0,.04);
+
+    --shadow-md:
+        0 4px 12px rgba(36,55,74,.08);
+
+    --shadow-lg:
+        0 12px 32px rgba(36,55,74,.10);
+
+    --shadow-hover:
+        0 16px 40px rgba(36,55,74,.12);
+
+
+
+    /* ========================================
+       TRANSITIONS
+    ======================================== */
+
+    --transition-fast: .15s ease;
+
+    --transition-normal: .25s ease;
+
+    --transition-slow: .35s ease;
+
+
+
+    /* ========================================
+       LAYOUT
+    ======================================== */
+
+    --header-height: 72px;
+
+    --filters-height: 70px;
+
+    --container-width: 1600px;
+
+    --page-padding: 28px;
+
+
+
+    /* ========================================
+       KPI CARDS
+    ======================================== */
+
+    --kpi-height: 120px;
+
+    --kpi-icon-size: 42px;
+
+
+
+    /* ========================================
+       CHARTS
+    ======================================== */
+
+    --chart-height: 360px;
+
+
+
+    /* ========================================
+       TABLE
+    ======================================== */
+
+    --table-height: 650px;
+
+
+
+    /* ========================================
+       Z-INDEX
+    ======================================== */
+
+    --z-header: 100;
+
+    --z-filter: 90;
+
+    --z-modal: 900;
+
+    --z-drawer: 950;
+
+    --z-loading: 9999;
+
+}
