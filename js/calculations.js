@@ -14,7 +14,8 @@ const CalculationEngine = {
     */
 
     buildDashboardData(
-        history = AppState.historicalData
+        history = AppState.historicalData,
+        previousHistory = []
     ) {
 
         const customerMap = new Map();
@@ -224,8 +225,11 @@ const CalculationEngine = {
             */
 
             customer.previousPeriodTier =
-                this.getPreviousPeriodTier(
-                    customer.customerId
+                this.getTierFromPaymentOrders(
+                    previousHistory.filter(order => {
+                        return String(order["Customer ID"] || "").trim()
+                            === customer.customerId;
+                    })
                 );
 
             /*
