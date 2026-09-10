@@ -160,6 +160,8 @@ const Filters = {
 
         this.populateFilters();
 
+        this.initializeDateRangePicker();
+
         this.attachEvents();
 
         this.updateFilterStates();
@@ -167,6 +169,93 @@ const Filters = {
         this.toggleStatusColumn();
 
         this.apply();
+
+    },
+
+
+    /*
+    ======================================
+    Date Range Picker
+    ======================================
+    */
+
+    initializeDateRangePicker() {
+
+        const dateRange =
+            document.getElementById("dateRange");
+
+        flatpickr(dateRange, {
+
+            mode: "range",
+
+            dateFormat: "Y-m-d",
+
+            allowInput: false,
+
+            onChange: (selectedDates) => {
+
+                if (selectedDates.length === 2) {
+
+                    const formatDate = date =>
+                        `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+
+                    AppState.filters.from =
+                        formatDate(selectedDates[0]);
+
+                    AppState.filters.to =
+                        formatDate(selectedDates[1]);
+
+                    // Clear Year and Quarter
+                    document.getElementById("yearFilter").value = "";
+                    document.getElementById("quarterFilter").value = "";
+
+                    this.apply();
+
+                }
+
+            },
+
+            onReady: (selectedDates, dateStr, instance) => {
+
+                const clearButton =
+                    document.createElement("button");
+
+                clearButton.type = "button";
+
+                clearButton.textContent = "Clear";
+
+                clearButton.className =
+                    "flatpickr-clear-button";
+
+                clearButton.addEventListener("click", () => {
+
+                    instance.clear();
+
+                    AppState.filters.from = "";
+                    AppState.filters.to = "";
+
+                    document.getElementById("yearFilter").disabled = false;
+                    document.getElementById("quarterFilter").disabled = false;
+
+                    // Restore current year
+                    const currentYear =
+                        new Date().getFullYear().toString();
+
+                    document.getElementById("yearFilter").value =
+                        currentYear;
+
+                    this.apply();
+
+                    instance.close();
+
+                });
+
+                instance.calendarContainer
+                    .appendChild(clearButton);
+
+            }
+
+        });
 
     },
 
@@ -333,8 +422,6 @@ const Filters = {
             "tagFilter",
             "stateFilter",
             "statusFilter",
-            "dateFrom",
-            "dateTo",
             "stockistOnly"
 
         ].forEach(id => {
@@ -413,11 +500,8 @@ const Filters = {
 
     updateFilterStates() {
 
-        const dateFrom =
-            document.getElementById("dateFrom");
-
-        const dateTo =
-            document.getElementById("dateTo");
+        const dateRange =
+            document.getElementById("dateRange");
 
         const year =
             document.getElementById("yearFilter");
@@ -426,29 +510,20 @@ const Filters = {
             document.getElementById("quarterFilter");
 
         const hasDate =
-            dateFrom.value !== "" ||
-            dateTo.value !== "";
+            Boolean(AppState.filters.from) ||
+            Boolean(AppState.filters.to);
 
         const hasYear =
             year.value !== "";
 
-        /*
-        ======================================
-        Custom Date selected
-        ======================================
-        */
-
+        // Custom date selected
         year.disabled = hasDate;
         quarter.disabled = hasDate;
 
-        /*
-        ======================================
-        Year selected
-        ======================================
-        */
-
-        dateFrom.disabled = hasYear;
-        dateTo.disabled = hasYear;
+        // Year selected
+        if (dateRange) {
+            dateRange.disabled = hasYear;
+        }
 
     },
 
@@ -751,13 +826,9 @@ const Filters = {
 
                 document.getElementById("stockistOnly").checked,
 
-            from:
+            from: AppState.filters.from || "",
 
-                document.getElementById("dateFrom").value,
-
-            to:
-
-                document.getElementById("dateTo").value
+            to: AppState.filters.to || ""
 
         };
 
