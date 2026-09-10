@@ -19,6 +19,9 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+    <!-- Date Range Picker -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
     <!-- CSS -->
     <link rel="stylesheet" href="css/variables.css">
     <link rel="stylesheet" href="css/base.css">
@@ -89,17 +92,69 @@
 
             <div class="filter-row">
 
-                <input type="date" id="dateFrom">
+                <!-- ======================================
+                    Date Range
+                ====================================== -->
 
-                <input type="date" id="dateTo">
+                <div class="filter-tooltip-wrapper">
 
-                <select id="yearFilter">
-                    <option value="">All Years</option>
-                </select>
+                    <input
+                        type="text"
+                        id="dateRange"
+                        placeholder="Select date range"
+                        readonly
+                    >
 
-                <select id="quarterFilter">
-                    <option value="">All Quarters</option>
-                </select>
+                    <span class="tooltip">
+                        ⓘ
+                        <span class="tooltip-text">
+                            To use a custom date range, select the All Year from the Year filter.
+                            Date Range cannot be used together with Year or Quarter.
+                            Clear the date range to return to Quarter filtering.
+                        </span>
+                    </span>
+
+                </div>
+
+                <!-- ======================================
+                    Year
+                ====================================== -->
+
+                <div class="filter-tooltip-wrapper">
+
+                    <select id="yearFilter">
+                        <option value="">All Years</option>
+                    </select>
+
+                    <span class="tooltip">
+                        ⓘ
+                        <span class="tooltip-text">
+                            Select a Year first when using the Quarter filter.
+                            The Year is required for the selected Quarter to work correctly.
+                        </span>
+                    </span>
+
+                </div>
+
+                <!-- ======================================
+                    Quarter
+                ====================================== -->
+
+                <div class="filter-tooltip-wrapper">
+
+                    <select id="quarterFilter">
+                        <option value="">All Quarters</option>
+                    </select>
+
+                    <span class="tooltip">
+                        ⓘ
+                        <span class="tooltip-text">
+                            Select a Year first, then choose Q1, Q2, Q3, or Q4.
+                            Quarter reporting is based on the selected Year + Quarter.
+                        </span>
+                    </span>
+
+                </div>
 
                 <select id="tierFilter">
                     <option value="">All Tiers</option>
@@ -335,7 +390,7 @@
                                 <span class="tooltip">
                                     ⓘ
                                     <span class="tooltip-text">
-                                        Average Order Value. Calculated as Order Total divided by the number of Orders.
+                                        Average Order Value, calculated as Order Total ÷ Orders.
                                     </span>
                                 </span>
                             </th>
@@ -443,6 +498,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="js/config.js"></script>
 <script src="js/api.js"></script>
 <script src="js/tiers.js"></script>
@@ -452,6 +508,322 @@
 <script src="js/table.js"></script>
 <script src="js/charts.js"></script>
 <script src="js/app.js"></script>
+
+
+<!-- ======================================
+     Help Center
+====================================== -->
+
+<div class="help-widget">
+
+    <button
+        id="helpButton"
+        class="help-button"
+        type="button"
+    >
+        <span>?</span>
+        <span>How It Works</span>
+    </button>
+
+    <div id="helpPanel" class="help-panel">
+
+        <div class="help-panel-header">
+
+            <div>
+                <strong>How It Works</strong>
+                <small>Quick guide to the dashboard</small>
+            </div>
+
+            <button
+                id="closeHelp"
+                class="help-close"
+                type="button"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <div class="help-tabs">
+
+            <button
+                class="help-tab active"
+                data-help-tab="calculations"
+            >
+                💰 Calculations
+            </button>
+
+            <button
+                class="help-tab"
+                data-help-tab="filters"
+            >
+                📅 Filters
+            </button>
+
+            <button
+                class="help-tab"
+                data-help-tab="columns"
+            >
+                📊 Columns
+            </button>
+
+        </div>
+
+        <!-- Calculations -->
+
+        <div
+            class="help-content active"
+            data-help-content="calculations"
+        >
+
+            <h4>How Total Paid is calculated</h4>
+
+            <p>
+                Total Paid only includes payments from orders that were
+                <strong>created and paid within the selected period</strong>.
+            </p>
+
+            <div class="help-rule">
+                <div>✓</div>
+                <span>Order was created within the selected period</span>
+            </div>
+
+            <div class="help-rule">
+                <div>✓</div>
+                <span>Order was paid within the selected period</span>
+            </div>
+
+            <div class="help-rule">
+                <div>✕</div>
+                <span>Gift Card payments are excluded</span>
+            </div>
+
+            <div class="help-rule">
+                <div>✕</div>
+                <span>Store Credit payments are excluded</span>
+            </div>
+
+
+            <h4>Quarter Filter Example</h4>
+
+            <div class="help-example">
+
+                <strong>2026 Q2 selected</strong>
+
+                <p>
+                    Reporting period:
+                    <strong>April 1 – June 30, 2026</strong>
+                </p>
+
+                <p>
+                    Order created: <strong>June 30, 2026</strong><br>
+                    Order Total: <strong>$100</strong><br>
+                    Payment received: <strong>June 30, 2026</strong>
+                </p>
+
+                <div class="help-result">
+                    ✓ Included in 2026 Q2 Total Paid
+                </div>
+
+            </div>
+
+
+            <h4>Payment Outside the Quarter</h4>
+
+            <div class="help-example">
+
+                <strong>2026 Q2 selected</strong>
+
+                <p>
+                    Order created: <strong>June 30, 2026</strong><br>
+                    Order Total: <strong>$100</strong><br>
+                    Payment received: <strong>July 1, 2026</strong>
+                </p>
+
+                <div class="help-result">
+                    ✕ Not included in Q2<br>
+                    ✕ Not included in Q3
+                </div>
+
+            </div>
+
+            <p class="help-note">
+                The order must be both created and paid within the same
+                reporting quarter to be included.
+            </p>
+
+
+            <h4>Date Range Filter Example</h4>
+
+            <div class="help-example">
+
+                <strong>January 1–6, 2026 selected</strong>
+
+                <p>
+                    Reporting period:
+                    <strong>January 1 – January 6, 2026</strong>
+                </p>
+
+                <p>
+                    Order created: <strong>January 3, 2026</strong><br>
+                    Order Total: <strong>$100</strong><br>
+                    Payment received: <strong>January 5, 2026</strong>
+                </p>
+
+                <div class="help-result">
+                    ✓ Included in Total Paid
+                </div>
+
+            </div>
+
+            <div class="help-example">
+
+                <p>
+                    Order created: <strong>January 3, 2026</strong><br>
+                    Order Total: <strong>$100</strong><br>
+                    Payment received: <strong>January 7, 2026</strong>
+                </p>
+
+                <div class="help-result">
+                    ✕ Not included in Total Paid
+                </div>
+
+            </div>
+
+            <p class="help-note">
+                For a custom date range, both the order creation date and
+                payment date must fall within the selected dates.
+            </p>
+
+        </div>
+
+        <!-- Filters -->
+
+        <div
+            class="help-content"
+            data-help-content="filters"
+        >
+
+            <h4>Year + Quarter</h4>
+
+            <p>
+                Select a <strong>Year</strong> first, then select
+                <strong>Q1, Q2, Q3, or Q4</strong>.
+            </p>
+
+            <p>
+                The Year is required for the selected Quarter to
+                work correctly.
+            </p>
+
+            <h4>Custom Date Range</h4>
+
+            <p>
+                To use a custom date range, first clear the
+                <strong>Year</strong> selection.
+            </p>
+
+            <p>
+                Date Range cannot be used together with the
+                Year + Quarter filters.
+            </p>
+
+            <h4>Switching Between Filters</h4>
+
+            <div class="help-step">
+                <strong>Quarter → Date Range</strong>
+                <span>Clear Year, then select your date range.</span>
+            </div>
+
+            <div class="help-step">
+                <strong>Date Range → Quarter</strong>
+                <span>Clear the date range, then select Year + Quarter.</span>
+            </div>
+
+            <h4>Date Range Example</h4>
+
+            <div class="help-example">
+
+                <strong>January 1–6 selected</strong>
+
+                <p>
+                    Only orders that were
+                    <strong>created AND paid between January 1 and January 6</strong>
+                    are included.
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- Columns -->
+
+        <div
+            class="help-content"
+            data-help-content="columns"
+        >
+
+            <h4>Tier</h4>
+
+            <p>
+                The customer's active loyalty tier for the current quarter.
+            </p>
+
+            <h4>Running Tier</h4>
+
+            <p>
+                The tier calculated from the customer's
+                <strong>Total Paid</strong> for the selected period.
+            </p>
+
+            <h4>Previous Tier</h4>
+
+            <p>
+                The customer's tier based on Total Paid during the
+                previous reporting period.
+            </p>
+
+            <h4>Status II</h4>
+
+            <p>
+                Compares the customer's Previous Tier with their
+                Running Tier to determine whether they are
+                <strong>Upgrading, Maintained, or Downgrading</strong>.
+            </p>
+
+            <h4>Status</h4>
+
+            <p>
+                Compares the customer's <strong>Present Tier (Tier column)</strong> with the
+                <strong>Running Tier column</strong> for the selected period.
+            </p>
+
+            <h4>Points</h4>
+
+            <p>
+                Displays the customer's current loyalty points.
+            </p>
+
+            <h4>AOV</h4>
+
+            <p>
+                Average Order Value, calculated as
+                <strong>Order Total ÷ Orders</strong>.
+            </p>
+
+            <h4>Spend to Upgrade</h4>
+
+            <p>
+                The remaining amount required to reach the next
+                partnership tier based on Total Paid.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
 
 </body>
 </html>
