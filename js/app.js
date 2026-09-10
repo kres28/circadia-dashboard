@@ -49,13 +49,9 @@ async function init() {
 
         await Api.loadData();
 
-        CalculationEngine.buildDashboardData();
-
         Filters.initialize();
 
-        document.getElementById("stockistOnly").checked = true;
-
-        Filters.apply();
+        initializeHelpPanel();
 
         initializeChartToggle();
 
@@ -72,50 +68,6 @@ async function init() {
         alert("Failed to initialize dashboard.");
 
     }
-
-}
-
-/*
-==========================================
-Default Quarter
-==========================================
-*/
-
-function setCurrentQuarter() {
-
-    const now = new Date();
-
-    const year = now.getFullYear();
-
-    const month = now.getMonth() + 1;
-
-    let quarter = "";
-
-    if (month <= 3) {
-
-        quarter = "Q1";
-
-    }
-
-    else if (month <= 6) {
-
-        quarter = "Q2";
-
-    }
-
-    else if (month <= 9) {
-
-        quarter = "Q3";
-
-    }
-
-    else {
-
-        quarter = "Q4";
-
-    }
-
-    AppState.filters.quarter = `${year}-${quarter}`;
 
 }
 
@@ -139,8 +91,6 @@ async function refreshDashboard() {
     try {
 
         await Api.loadData();
-
-        CalculationEngine.buildDashboardData();
 
         /*
         ======================================
@@ -260,5 +210,68 @@ function showDashboard() {
     document
         .getElementById("customerSection")
         ?.classList.remove("hidden");
+
+}
+
+
+/*
+======================================
+Help Center
+======================================
+*/
+
+function initializeHelpPanel() {
+
+    const helpButton =
+        document.getElementById("helpButton");
+
+    const helpPanel =
+        document.getElementById("helpPanel");
+
+    const closeHelp =
+        document.getElementById("closeHelp");
+
+    const helpTabs =
+        document.querySelectorAll(".help-tab");
+
+    const helpContents =
+        document.querySelectorAll(".help-content");
+
+    if (!helpButton || !helpPanel) return;
+
+    helpButton.addEventListener("click", () => {
+        helpPanel.classList.toggle("active");
+    });
+
+    closeHelp?.addEventListener("click", () => {
+        helpPanel.classList.remove("active");
+    });
+
+    helpTabs.forEach(tab => {
+
+        tab.addEventListener("click", () => {
+
+            const target =
+                tab.dataset.helpTab;
+
+            helpTabs.forEach(item => {
+                item.classList.remove("active");
+            });
+
+            helpContents.forEach(content => {
+                content.classList.remove("active");
+            });
+
+            tab.classList.add("active");
+
+            document
+                .querySelector(
+                    `[data-help-content="${target}"]`
+                )
+                ?.classList.add("active");
+
+        });
+
+    });
 
 }
