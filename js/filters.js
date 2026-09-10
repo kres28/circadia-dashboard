@@ -184,7 +184,7 @@ const Filters = {
         const dateRange =
             document.getElementById("dateRange");
 
-        flatpickr(dateRange, {
+        AppState.dateRangePicker = flatpickr(dateRange, {
 
             mode: "range",
 
@@ -204,6 +204,20 @@ const Filters = {
 
                     AppState.filters.to =
                         formatDate(selectedDates[1]);
+
+                    if (
+                        savedFilters.from &&
+                        savedFilters.to &&
+                        AppState.dateRangePicker
+                    ) {
+                        AppState.dateRangePicker.setDate(
+                            [
+                                savedFilters.from,
+                                savedFilters.to
+                            ],
+                            false
+                        );
+                    }
 
                     // Clear Year and Quarter
                     document.getElementById("yearFilter").value = "";
