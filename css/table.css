@@ -722,3 +722,14 @@ th.sorted .sort-icon {
     opacity: 1;
 
 }
+
+
+.filter-tooltip-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.filter-tooltip-wrapper .tooltip {
+    flex-shrink: 0;
+}
