@@ -284,6 +284,7 @@ const Filters = {
     populateFilters() {
         this.populateYears();
         this.populateQuarters();
+        this.populateActiveTiers();
         this.populateTiers();
         this.populateTags();
         this.populateStates();
@@ -368,7 +369,30 @@ const Filters = {
 
         const select = document.getElementById("tierFilter");
 
-        select.innerHTML = `<option value="">All Tiers</option>`;
+        select.innerHTML = `<option value="">All Running Tiers</option>`;
+
+        CONFIG.TIERS.forEach(tier => {
+
+            select.innerHTML +=
+                `<option value="${tier.name}">${tier.name}</option>`;
+
+        });
+
+    },
+
+    /*
+    ======================================
+    Active Tiers
+    ======================================
+    */
+
+    populateActiveTiers() {
+
+        const select =
+            document.getElementById("activeTierFilter");
+
+        select.innerHTML =
+            `<option value="">All Tiers</option>`;
 
         CONFIG.TIERS.forEach(tier => {
 
@@ -432,6 +456,7 @@ const Filters = {
 
             "yearFilter",
             "quarterFilter",
+            "activeTierFilter",
             "tierFilter",
             "tagFilter",
             "stateFilter",
@@ -477,7 +502,7 @@ const Filters = {
             });
     },
 
-    /*
+   /*
     ======================================
     States
     ======================================
@@ -485,17 +510,25 @@ const Filters = {
 
     populateStates() {
 
-        const select = document.getElementById("stateFilter");
+        const select =
+            document.getElementById("stateFilter");
 
-        select.innerHTML = `<option value="">All States</option>`;
+        select.innerHTML =
+            `<option value="">All States</option>`;
 
-        const states = [...new Set(
-
-            AppState.customers
-                .map(customer => customer["Default Address Province Code"])
-                .filter(Boolean)
-
-        )].sort();
+        const states = [
+            ...new Set(
+                AppState.customers
+                    .map(customer =>
+                        String(
+                            customer["Default Address Province Code"] || ""
+                        )
+                            .trim()
+                            .toUpperCase()
+                    )
+                    .filter(Boolean)
+            )
+        ].sort();
 
         states.forEach(state => {
 
@@ -817,6 +850,9 @@ const Filters = {
 
                 document.getElementById("tierFilter").value,
 
+            activeTier:
+                document.getElementById("activeTierFilter").value,
+
             tag:
 
                 document.getElementById("tagFilter").value,
@@ -1115,7 +1151,33 @@ const Filters = {
 
             /*
             ======================================
-            Tier Filter
+            Active Tier Filter
+            Filters the Tier column
+            ======================================
+            */
+
+            if (filters.activeTier) {
+
+                const activeTier =
+                    String(customer.previousQuarterTier || "")
+                        .trim()
+                        .toLowerCase();
+
+                const selectedActiveTier =
+                    String(filters.activeTier)
+                        .trim()
+                        .toLowerCase();
+
+                if (activeTier !== selectedActiveTier) {
+                    return false;
+                }
+
+            }
+
+            /*
+            ======================================
+            Running Tier Filter
+            Filters the Running Tier column
             ======================================
             */
 
