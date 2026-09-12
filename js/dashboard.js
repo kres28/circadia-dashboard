@@ -11,6 +11,7 @@ const Dashboard = {
 
         this.renderKPIs();
         this.renderTableSummary();
+        this.renderTierGuide();
 
     },
 
@@ -152,6 +153,32 @@ const Dashboard = {
 
     },
 
+   /*
+    ======================================
+    Tier Guide
+    ======================================
+    */
+
+    renderTierGuide() {
+
+        const container = document.getElementById("tierGuideList");
+
+        if (!container || !CONFIG.TIERS) return;
+
+        container.innerHTML = CONFIG.TIERS.map(tier => `
+            <div class="tier-guide-item">
+                <span class="tier-guide-name">${tier.name}</span>
+                <span class="tier-guide-amount">
+                    ${new Intl.NumberFormat(CONFIG.DASHBOARD.DATE_FORMAT, {
+                        style: "currency",
+                        currency: CONFIG.DASHBOARD.CURRENCY,
+                        minimumFractionDigits: 0
+                    }).format(tier.minimum)}
+                </span>
+            </div>
+        `).join("");
+
+    },
 
 
     /*
