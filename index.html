@@ -156,13 +156,35 @@
 
                 </div>
 
-                <select id="activeTierFilter">
-                    <option value="">All Tiers</option>
-                </select>
+                <div class="filter-tooltip-wrapper">
 
-                <select id="tierFilter">
-                    <option value="">All Running Tiers</option>
-                </select>
+                    <select id="activeTierFilter">
+                        <option value="">All Tiers</option>
+                    </select>
+
+                    <span class="tooltip">
+                        ⓘ
+                        <span class="tooltip-text">
+                            Filters customers by their active loyalty tier shown in the Tier column.
+                        </span>
+                    </span>
+
+                </div>
+
+                <div class="filter-tooltip-wrapper">
+
+                    <select id="tierFilter">
+                        <option value="">All Running Tiers</option>
+                    </select>
+
+                    <span class="tooltip">
+                        ⓘ
+                        <span class="tooltip-text">
+                            Filters customers by their Running Tier calculated from Total Paid for the selected period.
+                        </span>
+                    </span>
+
+                </div>
 
                 <select id="tagFilter">
                     <option value="">All Tags</option>
@@ -172,20 +194,49 @@
                     <option value="">All States</option>
                 </select>
 
-                <select id="statusFilter">
-                    <option value="">All Status</option>
-                    <option value="upgrade">Upgrading</option>
-                    <option value="maintained">Maintained</option>
-                    <option value="downgrade">Downgrading</option>
-                </select>
+                <div class="filter-tooltip-wrapper">
 
-                <label class="checkbox">
-                    <input
-                        type="checkbox"
-                        id="showStatusColumn"
+                    <select id="statusFilter">
+                        <option value="">All Status</option>
+                        <option value="upgrade">Upgrading</option>
+                        <option value="maintained">Maintained</option>
+                        <option value="downgrade">Downgrading</option>
+                    </select>
+
+                    <span class="tooltip">
+                        ⓘ
+                        <span class="tooltip-text">
+                            Filters customers by Status II based on their Previous Tier and Running Tier.
+                        </span>
+                    </span>
+
+                </div>
+
+                <div class="filter-tooltip-wrapper">
+
+                    <label class="checkbox">
+                        <input
+                            type="checkbox"
+                            id="showStatusColumn"
                         >
-                    <span>Show Status</span>
-                </label>
+                        <span>Show Status</span>
+                    </label>
+
+                    <span class="tooltip">
+                        ⓘ
+                        <span class="tooltip-text">
+                            Compares the Tier column with Running Tier column.
+                            This helps identify accounts where the customer's recorded
+                            tier has not yet been updated to match their Total Paid.
+                            <br><br>
+                            <strong>Example:</strong> A new stockist may place an order
+                            before receiving their stockist tag. Their Tier may still show
+                            Member even after their Total Paid has reached $3,500 and their
+                            Running Tier is Bronze.
+                        </span>
+                    </span>
+
+                </div>
 
                 <label class="checkbox">
 
