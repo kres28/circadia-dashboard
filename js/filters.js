@@ -1218,19 +1218,25 @@ const Filters = {
             }
 
 
+            /*
+            ======================================
+            Status Filter
+            Filters Status II column
+            ======================================
+            */
+
             if (filters.status) {
-
-                const status = String(customer.tierStatusII || "")
+                const statusII = String(customer.tierStatusII || "")
                     .trim()
                     .toLowerCase();
 
-                const selectedStatus = String(filters.status)
-                    .trim()
-                    .toLowerCase();
+                const statusMap = {
+                    upgrade: "upgrading",
+                    maintained: "maintained",
+                    downgrade: "downgrading"
+                };
 
-                if (status !== selectedStatus) {
-                    return false;
-                }
+                if (statusII !== statusMap[filters.status]) return false;
             }
 
 
