@@ -524,26 +524,40 @@ const Filters = {
         select.innerHTML =
             `<option value="">All States</option>`;
 
-        const states = [
-            ...new Set(
-                AppState.customers
-                    .map(customer =>
-                        String(
-                            customer["Default Address Province Code"] || ""
-                        )
-                            .trim()
-                            .toUpperCase()
-                    )
-                    .filter(Boolean)
+        const states = new Set();
+
+        AppState.customers.forEach(customer => {
+
+            const state = String(
+                customer["Default Address Province Code"] || ""
             )
-        ].sort();
+                .trim()
+                .toUpperCase();
 
-        states.forEach(state => {
+            // Ignore all blank variations
+            if (
+                !state ||
+                state === "(BLANK)"
+            ) {
+                return;
+            }
 
-            select.innerHTML +=
-                `<option value="${state}">${state}</option>`;
+            states.add(state);
 
         });
+
+        // Add exactly ONE blank option
+        select.innerHTML +=
+            `<option value="(blank)">(blank)</option>`;
+
+        [...states]
+            .sort()
+            .forEach(state => {
+
+                select.innerHTML +=
+                    `<option value="${state}">${state}</option>`;
+
+            });
 
     },
 
@@ -1385,15 +1399,25 @@ const Filters = {
 
             if (filters.state) {
 
+                const rawState = String(
+                    order["Customer State"] || ""
+                ).trim();
+
                 const state = STATE_MAP[
-                    String(order["Customer State"] || "")
-                        .trim()
-                        .toUpperCase()
+                    rawState.toUpperCase()
                 ] || "";
 
-                if (state !== filters.state.toUpperCase()) {
+                if (filters.state === "(blank)") {
 
-                    return false;
+                    if (state !== "") {
+                        return false;
+                    }
+
+                } else {
+
+                    if (state !== filters.state.toUpperCase()) {
+                        return false;
+                    }
 
                 }
 
