@@ -479,6 +479,14 @@ const Filters = {
             .getElementById("showStatusColumn")
             .addEventListener("change", () => this.toggleStatusColumn());
 
+        document
+            .getElementById("openOrderValueFilter")
+            ?.addEventListener("change", () => this.apply());
+
+        document
+            .getElementById("newCustomerFilter")
+            ?.addEventListener("change", () => this.apply());
+
     },
 
     toggleStatusColumn() {
@@ -878,7 +886,13 @@ const Filters = {
 
             from: AppState.filters.from || "",
 
-            to: AppState.filters.to || ""
+            to: AppState.filters.to || "",
+
+            openOrderValue:
+                document.getElementById("openOrderValueFilter")?.value || "",
+
+            newCustomer:
+                document.getElementById("newCustomerFilter")?.value || ""
 
         };
 
@@ -1297,11 +1311,47 @@ const Filters = {
 
         /*
         ======================================
-        Open Orders Filters
+        Open Orders
+        Latest Entry Per Order
         ======================================
         */
 
-        AppState.filteredOpenOrders = AppState.openOrders.filter(order => {
+        const latestOpenOrders = new Map();
+
+        AppState.openOrders.forEach(order => {
+
+            const orderName = String(order["Order Name"] || "")
+                .trim();
+
+            if (!orderName) return;
+
+            // Later rows overwrite earlier rows
+            latestOpenOrders.set(orderName, order);
+
+        });
+
+        AppState.filteredOpenOrders = [...latestOpenOrders.values()].filter(order => {
+
+            /*
+            ======================================
+            Hide Fulfilled Orders
+            Latest status wins
+            ======================================
+            */
+
+            const fulfillmentStatus = String(
+                order["Fulfillment Status"] || ""
+            )
+                .trim()
+                .toLowerCase();
+
+            // Hide fully fulfilled orders (case-insensitive)
+            if (fulfillmentStatus.includes("fulfilled") &&
+                !fulfillmentStatus.includes("partially")) {
+
+                return false;
+
+            }
 
             /*
             ======================================
@@ -1345,6 +1395,27 @@ const Filters = {
 
                     return false;
 
+                }
+
+            }
+
+            /*
+            ======================================
+            Order Value Filter
+            ======================================
+            */
+
+            if (filters.openOrderValue === "5000") {
+
+                const orderTotal = Number(
+                    String(order["Order Total"] || 0)
+                        .replace(/,/g, "")
+                        .replace("$", "")
+                        .trim()
+                ) || 0;
+
+                if (orderTotal <= 5000) {
+                    return false;
                 }
 
             }
