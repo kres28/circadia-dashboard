@@ -1536,6 +1536,22 @@ const Filters = {
 
         });
 
+        /*
+        ======================================
+        Open Orders Count
+        ======================================
+        */
+
+        const openOrdersCount =
+            document.getElementById("openOrdersCount");
+
+        if (openOrdersCount) {
+
+            openOrdersCount.textContent =
+                ` • ${AppState.filteredOpenOrders.length} orders found`;
+
+        }
+
 
         const showingOpenOrders =
             !document
