@@ -1237,9 +1237,17 @@ const Filters = {
                     .trim()
                     .toUpperCase();
 
-                if (state !== selectedState) {
+                if (selectedState === "(BLANK)") {
 
-                    return false;
+                    if (state !== "") {
+                        return false;
+                    }
+
+                } else {
+
+                    if (state !== selectedState) {
+                        return false;
+                    }
 
                 }
 
