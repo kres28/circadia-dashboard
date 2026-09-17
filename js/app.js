@@ -11,6 +11,8 @@ async function init() {
 
     try {
 
+        DashboardLogger.init();
+
         console.log("=================================");
         console.log(CONFIG.DASHBOARD.TITLE);
         console.log("Loading...");
