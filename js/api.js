@@ -1,224 +1,381 @@
 /*
 ==========================================
 Partnership Dashboard
-Google Sheets Data Loader
+Application Entry
 ==========================================
 */
 
-const Api = {
+document.addEventListener("DOMContentLoaded", init);
 
-    /*
-    ======================================
-    Load all dashboard data
-    ======================================
-    */
+async function init() {
 
-    async loadData() {
+    try {
 
-        try {
+        DashboardLogger.init();
 
-            const [
+        console.log("=================================");
+        console.log(CONFIG.DASHBOARD.TITLE);
+        console.log("Loading...");
+        console.log("=================================");
 
-                customers,
+        const savedUrl = localStorage.getItem("sheetUrl");
 
-                history,
+        if (savedUrl) {
 
-                openOrders,
-
-                loyaltyPoints
-
-            ] = await Promise.all([
-
-                this.loadSheet(CONFIG.GOOGLE.SHEETS.CUSTOMERS),
-
-                this.loadSheet(CONFIG.GOOGLE.SHEETS.HISTORY),
-
-                this.loadSheet(CONFIG.GOOGLE.SHEETS.OPEN_ORDERS),
-
-                this.loadSheet(
-                    CONFIG.GOOGLE.SHEETS.LOYALTY_POINTS
-                )
-
-            ]);
-
-            AppState.customers = customers;
-            AppState.historicalData = history;
-            AppState.openOrders = openOrders;
-            AppState.loyaltyPoints = loyaltyPoints;
-            console.table(AppState.openOrders.slice(0,5));
-
-            AppState.lastUpdated = new Date();
-
-            console.log("Customers:", customers.length);
-            console.log("Historical:", history.length);
-            console.log("Open Orders:", openOrders.length);
-
-            return true;
+            document.getElementById("sheetUrl").value = savedUrl;
 
         }
 
-        catch (error) {
+        document
+            .getElementById("saveSheetUrl")
+            ?.addEventListener("click", async () => {
 
-            console.error(error);
-            alert("Unable to load Google Sheets.");
-            return false;
+                const url = document
+                    .getElementById("sheetUrl")
+                    .value
+                    .trim();
 
-        }
+                if (!url) {
 
-    },
+                    alert("Please enter a Google Sheet URL.");
 
+                    return;
 
+                }
 
-    /*
-    ======================================
-    Load one sheet
-    ======================================
-    */
+                localStorage.setItem("sheetUrl", url);
 
-    async loadSheet(sheetName) {
+                await refreshDashboard();
 
-        const spreadsheetId = this.getSpreadsheetId();
+            });
 
-        const url =
-            `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
+        await Api.loadData();
 
-        const response = await fetch(url, {
+        Filters.initialize();
 
-            cache: "no-store"
+        initializeHelpPanel();
 
-        });
+        initializeChartToggle();
 
-        if (!response.ok) {
+        initializeOpenOrders();
 
-            throw new Error(`Unable to load ${sheetName}`);
-
-        }
-
-        const csv = await response.text();
-
-        return this.parseCSV(csv);
-
-    },
-
-
-
-    /*
-    ======================================
-    Get Spreadsheet ID
-    ======================================
-    */
-
-    // getSpreadsheetId() {
-
-    //     const url = CONFIG.GOOGLE.SHARE_URL;
-
-    //     const match = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
-
-    //     if (!match) {
-
-    //         throw new Error("Invalid Google Sheet URL.");
-
-    //     }
-
-    //     return match[1];
-
-    // },
-
-    getSpreadsheetId() {
-
-        const url =
-            localStorage.getItem("sheetUrl") ||
-            CONFIG.GOOGLE.SHARE_URL;
-
-        if (!url) {
-
-            throw new Error(
-                "Google Sheet URL has not been configured."
-            );
-
-        }
-
-        const match = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
-
-        if (!match) {
-
-            throw new Error("Invalid Google Sheet URL.");
-
-        }
-
-        return match[1];
-
-    },
-
-
-
-    /*
-    ======================================
-    CSV Parser
-    ======================================
-    */
-
-    parseCSV(csv) {
-
-        const result = Papa.parse(csv, {
-
-            header: true,
-
-            skipEmptyLines: true
-
-        });
-
-        return result.data;
-
-    },
-
-
-
-    /*
-    ======================================
-    Split CSV Row
-    Handles commas inside quotes
-    ======================================
-    */
-
-    splitCSV(line) {
-
-        const result = [];
-
-        let current = "";
-
-        let insideQuotes = false;
-
-        for (let i = 0; i < line.length; i++) {
-
-            const char = line[i];
-
-            if (char === '"') {
-
-                insideQuotes = !insideQuotes;
-
-                continue;
-
-            }
-
-            if (char === "," && !insideQuotes) {
-
-                result.push(current);
-
-                current = "";
-
-                continue;
-
-            }
-
-            current += char;
-
-        }
-
-        result.push(current);
-
-        return result;
+        console.log("Dashboard Ready");
 
     }
 
-};
+    catch (error) {
+
+        console.error(error);
+
+        alert("Failed to initialize dashboard.");
+
+    }
+
+}
+
+/*
+==========================================
+Refresh
+==========================================
+*/
+
+document
+    .getElementById("refreshButton")
+    ?.addEventListener("click", refreshDashboard);
+
+async function refreshDashboard() {
+
+    const button =
+        document.getElementById("refreshButton");
+
+    button.disabled = true;
+
+    button.textContent = "Refreshing...";
+
+
+    /*
+    ======================================
+    Save Current Filters
+    ======================================
+    */
+
+    const savedFilters = {
+
+        year:
+            document.getElementById("yearFilter").value,
+
+        quarter:
+            document.getElementById("quarterFilter").value,
+
+        tier:
+            document.getElementById("tierFilter").value,
+
+        tag:
+            document.getElementById("tagFilter").value,
+
+        state:
+            document.getElementById("stateFilter").value,
+
+        status:
+            document.getElementById("statusFilter").value,
+
+        stockist:
+            document.getElementById("stockistOnly").checked,
+
+        search:
+            document.getElementById("searchCustomer").value,
+
+        from:
+            AppState.filters.from || "",
+
+        to:
+            AppState.filters.to || ""
+
+    };
+
+
+    try {
+
+        /*
+        ======================================
+        Reload Data
+        ======================================
+        */
+
+        await Api.loadData();
+
+
+        /*
+        ======================================
+        Repopulate Filter Options
+        ======================================
+        */
+
+        Filters.populateFilters();
+
+
+        /*
+        ======================================
+        Restore Filter UI
+        ======================================
+        */
+
+        document.getElementById("yearFilter").value =
+            savedFilters.year;
+
+        document.getElementById("quarterFilter").value =
+            savedFilters.quarter;
+
+        document.getElementById("tierFilter").value =
+            savedFilters.tier;
+
+        document.getElementById("tagFilter").value =
+            savedFilters.tag;
+
+        document.getElementById("stateFilter").value =
+            savedFilters.state;
+
+        document.getElementById("statusFilter").value =
+            savedFilters.status;
+
+        document.getElementById("stockistOnly").checked =
+            savedFilters.stockist;
+
+        document.getElementById("searchCustomer").value =
+            savedFilters.search;
+
+
+        /*
+        ======================================
+        Restore Date Range State
+        ======================================
+        */
+
+        AppState.filters.from =
+            savedFilters.from;
+
+        AppState.filters.to =
+            savedFilters.to;
+
+
+        /*
+        ======================================
+        Reapply Filters
+        ======================================
+        */
+
+        Filters.updateFilterStates();
+
+        Filters.apply();
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+    }
+
+    finally {
+
+        button.disabled = false;
+
+        button.textContent = "Refresh Data";
+
+    }
+
+}
+
+function initializeChartToggle() {
+
+    const button = document.getElementById("toggleCharts");
+
+    const charts = document.getElementById("dashboardCharts");
+
+    if (!button || !charts) return;
+
+    const hidden = localStorage.getItem("chartsHidden") === "true";
+
+    if (hidden) {
+
+        charts.classList.add("hidden");
+        button.textContent = "Show Charts";
+
+    }
+
+    button.addEventListener("click", () => {
+
+        const hidden = charts.classList.toggle("hidden");
+
+        localStorage.setItem("chartsHidden", hidden);
+
+        button.textContent = hidden
+            ? "Show Charts"
+            : "Hide Charts";
+
+    });
+
+}
+
+/*
+==========================================
+Open Orders View
+==========================================
+*/
+
+function initializeOpenOrders() {
+
+    const openOrdersButton =
+        document.getElementById("openOrdersButton");
+
+    const backButton =
+        document.getElementById("backToDashboard");
+
+    openOrdersButton?.addEventListener("click", showOpenOrders);
+
+    backButton?.addEventListener("click", showDashboard);
+
+}
+
+
+/*
+==========================================
+Show Open Orders
+==========================================
+*/
+
+function showOpenOrders() {
+
+    document
+        .getElementById("customerSection")
+        ?.classList.add("hidden");
+
+    document
+        .getElementById("openOrdersSection")
+        ?.classList.remove("hidden");
+
+    Filters.apply();
+
+}
+
+
+/*
+==========================================
+Show Dashboard
+==========================================
+*/
+
+function showDashboard() {
+
+    document
+        .getElementById("openOrdersSection")
+        ?.classList.add("hidden");
+
+    document
+        .getElementById("customerSection")
+        ?.classList.remove("hidden");
+
+}
+
+
+/*
+======================================
+Help Center
+======================================
+*/
+
+function initializeHelpPanel() {
+
+    const helpButton =
+        document.getElementById("helpButton");
+
+    const helpPanel =
+        document.getElementById("helpPanel");
+
+    const closeHelp =
+        document.getElementById("closeHelp");
+
+    const helpTabs =
+        document.querySelectorAll(".help-tab");
+
+    const helpContents =
+        document.querySelectorAll(".help-content");
+
+    if (!helpButton || !helpPanel) return;
+
+    helpButton.addEventListener("click", () => {
+        helpPanel.classList.toggle("active");
+    });
+
+    closeHelp?.addEventListener("click", () => {
+        helpPanel.classList.remove("active");
+    });
+
+    helpTabs.forEach(tab => {
+
+        tab.addEventListener("click", () => {
+
+            const target =
+                tab.dataset.helpTab;
+
+            helpTabs.forEach(item => {
+                item.classList.remove("active");
+            });
+
+            helpContents.forEach(content => {
+                content.classList.remove("active");
+            });
+
+            tab.classList.add("active");
+
+            document
+                .querySelector(
+                    `[data-help-content="${target}"]`
+                )
+                ?.classList.add("active");
+
+        });
+
+    });
+
+}
