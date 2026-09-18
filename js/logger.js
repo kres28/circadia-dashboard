@@ -15,7 +15,7 @@ const DashboardLogger = {
 
     inactivityLimit: 5 * 60 * 1000,
 
-    heartbeatInterval: 5 * 60 * 1000,
+    heartbeatInterval: 60 * 1000,
 
 
     /*
@@ -43,7 +43,17 @@ const DashboardLogger = {
 
         }
 
-        this.sessionStart = Date.now();
+        this.sessionStart =
+            Number(
+                sessionStorage.getItem(
+                    "dashboardSessionStart"
+                )
+            ) || Date.now();
+
+        sessionStorage.setItem(
+            "dashboardSessionStart",
+            this.sessionStart
+        );
 
         this.lastActivity = Date.now();
 
@@ -450,22 +460,47 @@ const DashboardLogger = {
 
     send(payload) {
 
+        const body =
+            JSON.stringify(payload);
+
+        try {
+
+            const blob =
+                new Blob(
+                    [body],
+                    {
+                        type:
+                            "text/plain;charset=utf-8"
+                    }
+                );
+
+            const sent =
+                navigator.sendBeacon(
+                    this.endpoint,
+                    blob
+                );
+
+            if (sent) {
+                return;
+            }
+
+        } catch (error) {
+
+            // Fall back to fetch
+
+        }
+
         fetch(
             this.endpoint,
             {
-
                 method: "POST",
-
                 mode: "no-cors",
-
                 headers: {
                     "Content-Type":
                         "text/plain;charset=utf-8"
                 },
-
-                body:
-                    JSON.stringify(payload)
-
+                body: body,
+                keepalive: true
             }
         ).catch(() => {
 
